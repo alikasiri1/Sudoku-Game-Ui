@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scxml xmlns="http://www.w3.org/2005/07/scxml" version="1.0" binding="early" xmlns:qt="http://www.qt.io/2015/02/scxml-ext" name="Sudoku" datamodel="ecmascript" qt:editorversion="4.13.1">
+    <datamodel>
+        <data id="initState"/>
+        <data id="currentState" expr="[[]]"/>
+        <data id="undoStack"/>
+    </datamodel>
+    <script src="sudoku.js"/>
+    <state id="game">
+        <qt:editorinfo scenegeometry="-30;0;-313;-353.09;469.64;459.09" geometry="-30;0;-283;-353.09;469.64;459.09"/>
+        <onentry>
+            <raise event="restart"/>
+        </onentry>
+        <state id="idle">
+            <qt:editorinfo scenegeometry="-30;-140;-200;-285.54;336.64;250.18" geometry="0;-140;-170;-145.54;336.64;250.18"/>
+            <transition type="internal" event="start" target="playing"/>
+            <transition type="internal" event="setup" target="unsolved">
+                <assign location="initState" expr="_event.data.initState"/>
+                <raise event="restart"/>
+            </transition>
+            <state id="unsolved">
+                <qt:editorinfo scenegeometry="-120;-140;-180;-190;120;100" geometry="-90;0;-60;-50;120;100"/>
+            </state>
+            <state id="solved">
+                <qt:editorinfo scenegeometry="-10;-105.36;-70;-155.36;120;100" geometry="20;34.64;-60;-50;120;100"/>
+            </state>
+        </state>
+        <state id="playing">
+            <qt:editorinfo scenegeometry="-64.64;20;-170.64;-28.48;146;114.48" geometry="-34.64;20;-106;-48.48;146;114.48"/>
+            <onentry>
+                <raise event="restart"/>
+            </onentry>
+            <transition type="internal" event="tap">
+                <if cond="isValidPosition()">
+                    <script>calculateCurrentState();</script>
+                    <if cond="isSolved()">
+                        <raise event="solved"/>
+                    </if>
+                    <raise event="update"/>
+                </if>
+            </transition>
+            <transition type="internal" event="undo">
+                <script>undo();</script>
+                <raise event="update"/>
+            </transition>
+            <transition type="internal" event="stop" target="idle"/>
+            <transition type="internal" event="solved" target="solved"/>
+        </state>
+        <transition type="internal" event="restart">
+            <script>restart();</script>
+            <raise event="update"/>
+        </transition>
+        <transition type="internal" event="update">
+            <send event="updateGUI">
+                <param name="currentState" expr="currentState"/>
+                <param name="initState" expr="initState"/>
+            </send>
+        </transition>
+    </state>
+</scxml>
