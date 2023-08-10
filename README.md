@@ -1,1 +1,1 @@
-# Sudoku-Game-Ui
+# Sudoku-Game-GUi
