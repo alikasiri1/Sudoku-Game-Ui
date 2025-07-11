@@ -1,6 +1,5 @@
 #include "widget.h"
 #include "username.h"
-
 #include "beginning.h"
 #include <QApplication>
 
